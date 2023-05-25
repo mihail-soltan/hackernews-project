@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>HackerNews Articles</h1>
+      <input type="text" id="searchInput" placeholder="Cauta articole..." />
+    </header>
+    <div id="articles"></div>
+    <script>
+      const searchBar = document.getElementById("searchInput");
+      const articleContainer = document.getElementById("articles");
+
+      const showArticles = (articles) => {
+        articleContainer.innerHTML = "";
+        articles.forEach((article) => {
+          const articleCard = document.createElement("div");
+          articleCard.classList.add("article");
+          articleCard.innerHTML = `
+                <h2>${article.title}</h2>
+                <p>${article.author}</p>
+                <a href="${article.url}" target="_blank">Read more...</a>
+            `;
+          articleContainer.appendChild(articleCard);
+        });
+      };
+      const getArticles = async (query) => {
+        const apiUrl =
+        `https://hn.algolia.com/api/v1/search?query=${query}&hitsPerPage=50`;
+        const response = await fetch(apiUrl)
+        const data = await response.json()
+        showArticles(data.hits)
+      }
+      getArticles("")
+
+      searchBar.addEventListener("input", (e)=>{
+        let searchString = e.target.value
+        getArticles(searchString)
+      })
+    </script>
+  </body>
+</html>
